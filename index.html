@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Visualization Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <!-- Added date adapter -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: rgb(6, 6, 180);
+    }
+    .container{
+      font-weight: bold;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: hwb(48 83% 3%);
+    
+    }
+  .controls {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  
+    .filters {
+      display: flex;
+      gap: 20px;
+      text-align: center;
+      color: hwb(0 9% 3%);
+    }
+  
+    .charts {
+      display: flex;
+      flex-direction: row;  /* Change this from row to column to stack vertically */
+      max-width: 650px;
+      gap: 20px;
+    }
+  
+    canvas {
+      width: 100%;
+      height: 300px;  /* Adjust height as needed */
+    }
+  </style>
+  
+</head>
+<body>
+<div class="container">
+  <h1>Data Visualization Dashboard</h1>
+
+  <div class="controls">
+    <div class="filters">
+      <label>
+        Age Group:
+        <select id="ageGroup">
+          <option value="all">All</option>
+          <option value="15-25">15-25</option>
+          <option value=">25">>25</option>
+        </select>
+      </label>
+
+      <label>
+        Gender:
+        <select id="genderFilter">
+          <option value="all">All</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </label>
+
+      <label>
+        Date Range:
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+      </label>
+
+      <button id="applyFilters">Apply Filters</button>
+    </div>
+  </div>
+
+  <div class="charts">
+    <canvas id="barChart"></canvas>
+    <canvas id="lineChart"></canvas>
+  </div>
+</div>
+
+  <script>
+    let barChart, lineChart, data = [];
+
+    // Fetch JSON Data from output.json
+    fetch("output.json")
+      .then(response => response.json())
+      .then(jsonData => {
+        data = jsonData;
+        // Initialize both charts on first load
+        createBarChart([
+          { feature: 'A', value: 0 },
+          { feature: 'B', value: 0 },
+          { feature: 'C', value: 0 },
+          { feature: 'D', value: 0 },
+          { feature: 'E', value: 0 },
+          { feature: 'F', value: 0 }
+        ]);
+        createLineChart();
+      })
+      .catch(err => console.error("Failed to load JSON data:", err));
+
+    // Initialize Bar Chart
+    function createBarChart(chartData) {
+      const ctx = document.getElementById('barChart').getContext('2d');
+      if (barChart) barChart.destroy();
+
+      barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.map(item => item.feature),
+          datasets: [{
+            label: 'Total Time Spent',
+            data: chartData.map(item => item.value),
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const index = elements[0].index;
+              const feature = chartData[index].feature;
+              updateLineChart(feature);
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize Line Chart
+    function createLineChart() {
+      const ctx = document.getElementById('lineChart').getContext('2d');
+      if (lineChart) lineChart.destroy(); // Destroy existing chart before creating new one
+
+      lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Time Trend',
+            data: [],
+            borderColor: 'rgba(153, 102, 255, 0.8)',
+            fill: false
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day'
+              }
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              },
+              pan: {
+                enabled: true,
+                mode: 'x'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update Line Chart Based on Feature
+    function updateLineChart(feature) {
+      const featureData = data.map(item => ({ day: item.day, value: item[feature] }));
+
+      lineChart.data.labels = featureData.map(d => d.day);
+      lineChart.data.datasets[0].data = featureData.map(d => d.value);
+      lineChart.update();
+    }
+
+    // Apply Filters and Update Charts
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      const ageFilter = document.getElementById('ageGroup').value;
+      const genderFilter = document.getElementById('genderFilter').value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+
+      let filteredData = [...data];
+
+      if (ageFilter !== 'all') {
+        filteredData = filteredData.filter(item => item.age === ageFilter);
+      }
+      if (genderFilter !== 'all') {
+        filteredData = filteredData.filter(item => item.gender === genderFilter);
+      }
+      if (startDate) {
+        filteredData = filteredData.filter(item => item.day >= startDate);
+      }
+      if (endDate) {
+        filteredData = filteredData.filter(item => item.day <= endDate);
+      }
+
+      const featureTotals = ['A', 'B', 'C', 'D', 'E', 'F'].map(feature => ({
+        feature,
+        value: filteredData.reduce((sum, item) => sum + (item[feature] || 0), 0)
+      }));
+
+      createBarChart(featureTotals);
+      createLineChart(); // Ensure the line chart is initialized
+    });
+
+  </script>
+</body>
+</html>
