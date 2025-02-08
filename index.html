@@ -17,24 +17,25 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background: rgb(241, 241, 245);
+        background: #f1f1f5;
         color: #e0e0e0;
       }
 
       .container {
-        width: 100%;
-        max-width: 400px;
+         height: 60%;
+        max-width: 500px;
         background: #0f245e;
-        padding: 20px;
+        padding: 5px;
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         text-align: center;
+        
       }
 
-      h2 {
+      h1 {
         margin-bottom: 20px;
-        font-weight: 600;
-        color: hsl(350, 88%, 55%);
+        font-weight: 900;
+        color: rgb(245, 41, 75);
       }
 
       input {
@@ -51,11 +52,12 @@
       button {
         width: 100%;
         padding: 10px;
-        background: #f00f35;
+        background: #e40429;
         color: white;
         border: none;
         border-radius: 5px;
         font-size: 18px;
+        font-weight: bold;
         cursor: pointer;
         transition: 0.3s;
       }
@@ -66,10 +68,11 @@
 
       p {
         margin-top: 15px;
+        font-weight: bold;
       }
 
       a {
-        color: #ec2748;
+        color: #f81c41;
         text-decoration: none;
         font-weight: bold;
       }
@@ -81,7 +84,7 @@
   </head>
   <body>
      <div class="container" id="authContainer">
-<h2 id="formTitle">Sign Up</h2>
+<h1 id="formTitle">Sign Up</h1>
       <form id="authForm">
         <input type="email" id="email" placeholder="Enter Email" required />
         <input
