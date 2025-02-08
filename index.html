@@ -3,330 +3,214 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Visualization Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    />
+    <title>User Authentication</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        background-color: #f4f9f9;
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+* {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
       }
-
-      h1.heading {
-        font-size: 2.5rem;
-        font-family: "Courier New", Courier, monospace;
-        color: #0a0157;
-        font-weight: bold;
-        margin-top: 2px;
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: rgb(241, 241, 245);
+        color: #e0e0e0;
       }
 
       .container {
-        background-color: #ffffff;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 20px 4px 10px rgba(0, 0, 0, 0.2);
-      }
-
-      .controls {
-        padding: 30px;
-        background-color: #070a41;
+        width: 100%;
+        max-width: 400px;
+        background: #0f245e;
+        padding: 20px;
         border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        text-align: center;
+      }
+
+      h2 {
         margin-bottom: 20px;
+        font-weight: 600;
+        color: hsl(350, 88%, 55%);
       }
 
-      .filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        justify-content: center;
-      }
-
-      label {
-        font-weight: bold;
-        color: white;
-      }
-
-      .form-select,
-      .form-control {
-        border-radius: 5px;
-        border: none;
-        padding: 4px;
-        font-weight: bold;
-      }
-
-      .date-range {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-      }
-
-      .chart-container {
-        background: #f0edc2;
-        height: 400px;
+      input {
         width: 100%;
         padding: 10px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        background:white;
+        color: #0f3460;
       }
 
-      #applyFilters {
-        background-color: #307ec7;
-        border: none;
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #f00f35;
         color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background: #f31932;
+      }
+
+      p {
+        margin-top: 15px;
+      }
+
+      a {
+        color: #ec2748;
+        text-decoration: none;
         font-weight: bold;
-        width: 140px;
-        height: 35px;
       }
 
-      .chart-section {
-        background-color: #020f46;
-        padding: 15px;
-        border-radius: 10px;
-      }
-
-      /* Media queries for responsiveness */
-      @media (max-width: 768px) {
-        h1.heading {
-          font-size: 2rem;
-        }
-
-        .container {
-          padding: 15px;
-        }
-
-        .filters {
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .date-range {
-          flex-direction: column;
-        }
-
-        .chart-container {
-          height: 300px;
-        }
-
-        #applyFilters {
-          width: 100%;
-          height: 45px;
-        }
-
-        .chart-section {
-          padding: 10px;
-        }
-      }
-
-      @media (max-width: 576px) {
-        h1.heading {
-          font-size: 1.5rem;
-        }
-
-        .controls {
-          padding: 20px;
-        }
-
-        .filters {
-          gap: 15px;
-        }
-
-        .date-range {
-          gap: 10px;
-        }
-
-        .chart-container {
-          height: 250px;
-        }
-
-        #applyFilters {
-          width: 100%;
-          height: 40px;
-        }
-
-        .chart-section {
-          padding: 5px;
-        }
+      a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
-    <h1 class="heading">Data Visualization Dashboard</h1>
-    <div class="container">
-      <div class="controls">
-        <div class="filters">
-          <label>
-            Age Group
-            <select id="ageGroup" class="form-select">
-              <option value="all">All</option>
-              <option value="15-25">15-25</option>
-              <option value=">25">>25</option>
-            </select>
-          </label>
-          <label>
-            Gender
-            <select id="genderFilter" class="form-select">
-              <option value="all">All</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </label>
-          <div class="date-range">
-            <label>
-              Start Date
-              <input type="date" id="startDate" class="form-control" />
-            </label>
-            <label>
-              End Date
-              <input type="date" id="endDate" class="form-control" />
-            </label>
-          </div>
-          <button id="applyFilters" class="btn">Apply Filters</button>
-        </div>
-      </div>
+     <div class="container" id="authContainer">
+<h2 id="formTitle">Sign Up</h2>
+      <form id="authForm">
+        <input type="email" id="email" placeholder="Enter Email" required />
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter Password"
+          required
+        />
+        <button type="submit" id="authButton">Sign Up</button>
+      </form>
+      <p id="toggleText">
+        Already have an account? <a href="#" onclick="toggleForm()">Login</a>
+      </p>
+      <p><a href="#" onclick="showForgotPassword()">Forgot Password?</a></p>
+    </div>
 
-      <div class="row chart-section">
-        <div class="col-md-6 mb-4">
-          <div class="chart-container">
-            <canvas id="barChart"></canvas>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="chart-container">
-            <canvas id="lineChart"></canvas>
-          </div>
-        </div>
-      </div>
+    <div class="container" id="forgotPasswordContainer" style="display: none">
+      <h2>Forgot Password</h2>
+      <form id="forgotPasswordForm">
+        <input
+          type="email"
+          id="resetEmail"
+          placeholder="Enter Your Email"
+          required
+        />
+        <button type="submit">Reset Password</button>
+      </form>
+      <p><a href="#" onclick="hideForgotPassword()">Back to Login</a></p>
     </div>
 
     <script>
-      let barChart,
-        lineChart,
-        data = [];
-      fetch("output.json")
-        .then((response) => response.json())
-        .then((jsonData) => {
-          data = jsonData;
-          createBarChart([
-            { feature: "A", value: 0 },
-            { feature: "B", value: 0 },
-            { feature: "C", value: 0 },
-            { feature: "D", value: 0 },
-            { feature: "E", value: 0 },
-            { feature: "F", value: 0 },
-          ]);
-          createLineChart();
-        })
-        .catch((err) => console.error("Failed to load JSON data:", err));
+      let isLogin = false;
 
-      function createBarChart(chartData) {
-        const ctx = document.getElementById("barChart").getContext("2d");
-        if (barChart) barChart.destroy();
-        barChart = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: chartData.map((item) => item.feature),
-            datasets: [
-              {
-                label: "Total Time Spent",
-                data: chartData.map((item) => item.value),
-                backgroundColor: "rgba(76, 192, 192, 0.5)",
-              },
-            ],
-          },
-          options: {
-            indexAxis: "y",
-            responsive: true,
-            maintainAspectRatio: false,
-            onClick: (event, elements) => {
-              if (elements.length > 0) {
-                const index = elements[0].index;
-                const feature = chartData[index].feature;
-                updateLineChart(feature);
-              }
-            },
-          },
+      function toggleForm() {
+        isLogin = !isLogin;
+        document.getElementById("formTitle").innerText = isLogin
+          ? "Login"
+          : "Sign Up";
+        document.getElementById("authButton").innerText = isLogin
+          ? "Login"
+          : "Sign Up";
+        document.getElementById("toggleText").innerHTML = isLogin
+          ? "Don't have an account? <a href='#' onclick='toggleForm()'>Sign Up</a>"
+          : "Already have an account? <a href='#' onclick='toggleForm()'>Login</a>";
+      }
+
+      function showForgotPassword() {
+        document.getElementById("authContainer").style.display = "none";
+        document.getElementById("forgotPasswordContainer").style.display =
+          "block";
+      }
+
+      function hideForgotPassword() {
+        document.getElementById("forgotPasswordContainer").style.display =
+          "none";
+        document.getElementById("authContainer").style.display = "block";
+      }
+
+      document
+        .getElementById("authForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          handleAuth();
         });
-      }
 
-      function createLineChart() {
-        const ctx = document.getElementById("lineChart").getContext("2d");
-        if (lineChart) lineChart.destroy();
-        lineChart = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: "Time Trend",
-                data: [],
-                borderColor: "rgba(153, 102, 255, 0.8)",
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: { type: "time", time: { unit: "day" } },
-            },
-            plugins: {
-              zoom: {
-                zoom: {
-                  wheel: { enabled: true },
-                  pinch: { enabled: true },
-                  mode: "x",
-                },
-                pan: { enabled: true, mode: "x" },
-              },
-            },
-          },
+      document
+        .getElementById("forgotPasswordForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          handleForgotPassword();
         });
+
+      function handleAuth() {
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value.trim();
+
+        if (!email || !password) {
+          alert("Please enter both email and password.");
+          return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+        if (isLogin) {
+          let user = users.find((user) => user.email === email);
+
+          if (user) {
+            if (user.password === password) {
+              alert("Login Successful ✅");
+              localStorage.setItem("isAuthenticated", "true");
+              localStorage.setItem("currentUser", email);
+              window.location.href = "dashboard.html";
+            } else {
+              alert("Incorrect Password ❌");
+            }
+          } else {
+            alert("No account found. Please sign up.");
+          }
+        } else {
+          if (users.find((user) => user.email === email)) {
+            alert("User already exists! Please login.");
+            toggleForm();
+            return;
+          }
+
+          users.push({ email, password });
+          localStorage.setItem("users", JSON.stringify(users));
+          alert("Signup Successful 🎉 Please login now.");
+          toggleForm();
+        }
       }
 
-      function updateLineChart(feature) {
-        const featureData = data.map((item) => ({
-          day: item.day,
-          value: item[feature],
-        }));
-        lineChart.data.labels = featureData.map((d) => d.day);
-        lineChart.data.datasets[0].data = featureData.map((d) => d.value);
-        lineChart.update();
-      }
+      function handleForgotPassword() {
+        let resetEmail = document.getElementById("resetEmail").value.trim();
+        if (!resetEmail) {
+          alert("Please enter your email.");
+          return;
+        }
 
-      document.getElementById("applyFilters").addEventListener("click", () => {
-        const ageFilter = document.getElementById("ageGroup").value;
-        const genderFilter = document.getElementById("genderFilter").value;
-        const startDate = document.getElementById("startDate").value;
-        const endDate = document.getElementById("endDate").value;
-        let filteredData = [...data];
-        if (ageFilter !== "all")
-          filteredData = filteredData.filter((item) => item.age === ageFilter);
-        if (genderFilter !== "all")
-          filteredData = filteredData.filter(
-            (item) => item.gender === genderFilter
-          );
-        if (startDate)
-          filteredData = filteredData.filter((item) => item.day >= startDate);
-        if (endDate)
-          filteredData = filteredData.filter((item) => item.day <= endDate);
-        const featureTotals = ["A", "B", "C", "D", "E", "F"].map((feature) => ({
-          feature,
-          value: filteredData.reduce(
-            (sum, item) => sum + (item[feature] || 0),
-            0
-          ),
-        }));
-        createBarChart(featureTotals);
-        createLineChart();
-      });
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let user = users.find((user) => user.email === resetEmail);
+
+        if (user) {
+          alert("Password reset instructions have been sent to your email.");
+          hideForgotPassword();
+        } else {
+          alert("No account found with that email.");
+        }
+      }
     </script>
   </body>
 </html>
-
